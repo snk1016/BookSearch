@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.groobee.message" >
+
+    <application>
+        <receiver
+            android:name="com.groobee.message.GroobeeFirebaseReceiver"
+            android:exported="false"/>
+    </application>
+</manifest>

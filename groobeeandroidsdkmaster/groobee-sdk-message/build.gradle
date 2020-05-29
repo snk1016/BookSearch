@@ -1,0 +1,114 @@
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+bintray {
+    user = 'songnk1016'
+    key = '8bfe1a556b90dd54cccdcdafe6ddc88642730f3d'
+
+    publish = true
+
+    pkg {
+        repo = 'test'
+        name = 'com.groobee.message'
+        licenses = ['Apache-2.0']
+        websiteUrl = 'https://github.com/snk1016/groobee-message'
+        issueTrackerUrl = 'https://github.com/snk1016/groobee-message/issues'
+        vcsUrl = 'https://github.com/snk1016/groobee-message.git'
+        githubRepo = 'snk1016/groobee-message'
+
+        version {
+            name = '0.1.4'
+            vcsTag = '0.1.4'
+            released = new Date()
+        }
+    }
+}
+
+tasks.withType(Javadoc).all {
+    enabled = false
+}
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+        // Neccesary for Dagger
+        incremental = false
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "androidx.appcompat:appcompat:${ANDROIDX_APP_COMPAT_VERSION}"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    compileOnly "com.google.firebase:firebase-messaging:${FIREBASE_PUSH_MESSAGING_VERSION}"
+
+    implementation 'com.google.dagger:dagger:2.16'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+
+    implementation 'com.google.android.gms:play-services-tasks:17.0.0'
+    implementation 'androidx.browser:browser:1.0.0'
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name 'GroobeeSDK'
+            description 'A wrapper library for basic functions of Google Play Services APIs'
+            url 'https://github.com/snk1016/groobee-message'
+            inceptionYear '2020'
+
+            packaging 'aar'
+            groupId 'com.groobee.message'
+            artifactId 'groobee-sdk-message'
+            version '0.1.1'
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            scm {
+                connection 'https://github.com/snk1016/groobee-message.git'
+                url 'https://github.com/snk1016/groobee-message'
+
+            }
+            developers {
+                developer {
+                    name 'Google'
+                }
+            }
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.5'
+}
