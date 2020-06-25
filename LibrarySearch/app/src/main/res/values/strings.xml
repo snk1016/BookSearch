@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">LibrarySearch</string>
+
+    <string name="kakao_service_url">https://dapi.kakao.com</string>
+
+    <string name="txt_search">Search</string>
+
+    <string name="hint_search">검색할 책 이름을 입력해주세요.</string>
+
+    <string name="kakao_authorization">KakaoAK 6fe88491b61f9cf66159fd1109a46f53</string>
+</resources>
