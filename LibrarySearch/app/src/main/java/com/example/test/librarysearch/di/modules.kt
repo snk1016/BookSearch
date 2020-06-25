@@ -1,5 +1,6 @@
 package com.example.test.librarysearch.di
 
+import android.util.Log
 import com.example.test.librarysearch.LibSearchApp
 import com.example.test.librarysearch.services.NetworkService
 import okhttp3.OkHttpClient

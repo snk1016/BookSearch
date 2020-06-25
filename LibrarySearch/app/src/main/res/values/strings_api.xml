@@ -1,0 +1,4 @@
+<resources>
+    <string name="REST_API_FUNCTION_SEARCH_BOOK">searchBook</string>
+
+</resources>

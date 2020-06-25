@@ -38,11 +38,13 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        homeViewModelFactory = HomeViewModelFactory(api)
-        homeViewModel = ViewModelProvider(requireParentFragment().viewModelStore, homeViewModelFactory)
+        homeViewModelFactory = HomeViewModelFactory(context, api)
+        homeViewModel = ViewModelProvider(this, homeViewModelFactory)
                         .get(HomeViewModel::class.java)
 
         binding.viewModel = homeViewModel
         binding.lifecycleOwner = this
+
+        homeViewModel.callApiService(getString(R.string.REST_API_FUNCTION_SEARCH_BOOK))
     }
 }
