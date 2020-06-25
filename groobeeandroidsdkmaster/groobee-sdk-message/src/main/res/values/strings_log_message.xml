@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="RUNTIME_CONFIG_PROVIDER_SET_RUNTIME_CONFIG">Setting configuration with config: %1$s</string>
+    <string name="RUNTIME_CONFIG_PROVIDER_CLEAN">Clearing configuration cache</string>
+
+    <string name="TEMPORARY_CONFIG_PROVIDER_GET_VALUE_CONTAINS">Using runtime override value for key: %1$s and value: %2$s</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_GET_VALUE_DEFAULT">Defaulting to using xml value for key: %1$s and value: %2$s</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_INTEGER_RESOURCE_VALUE">Unable to find the xml integer configuration value with key %1$s. Using default value \'%2$s\'.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_INTEGER_RESOURCE_VALUE_EXCEPTION">Unexpected exception retrieving the xml integer configuration value with key %1$s. Using default value \'%2$s\'.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_COLOR_RESOURCE_VALUE">Unable to find the xml color configuration value with key %1$s.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_COLOR_RESOURCE_VALUE_EXCEPTION">Unexpected exception retrieving the xml color configuration value with key %1$s. %2$s.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_BOOLEAN_RESOURCE_VALUE">Unable to find the xml boolean configuration value with key %1$s. Using default value \'%2$s\'.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_BOOLEAN_RESOURCE_VALUE_EXCEPTION">Unexpected exception retrieving the xml boolean configuration value with key %1$s. Using default value \'%2$s\'.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_STRING_RESOURCE_VALUE">Unable to find the xml string configuration value with key %1$s. Using default value \'%2$s\'.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_STRING_RESOURCE_VALUE_EXCEPTION">Unexpected exception retrieving the xml string configuration value with key %1$s. Using default value \'%2$s\'.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_STRING_ARRAY_RESOURCE_VALUE">Unable to find the xml string array configuration value with key %1$s. Using default value \'%2$s\'.</string>
+    <string name="TEMPORARY_CONFIG_PROVIDER_READ_STRING_ARRAY_RESOURCE_VALUE_EXCEPTION">Unexpected exception retrieving the xml string array configuration value with key %1$s. Using default value \'%2$s\'.</string>
+
+    <string name="GROOBEE_CONFIG_PROVIDER_GET_APPLICATION_ICON_RESOURCE_ID_EXCEPTION">Cannot find package named %1$s</string>
+    <string name="GROOBEE_CONFIG_PROVIDER_GET_NOTIFICATION_ICON_RESOURCE_ID">Using runtime override value for key: %1$s and value: %2$s</string>
+    <string name="GROOBEE_CONFIG_PROVIDER_GET_DEFAULT_NOTIFICATION_ACCENT_COLOR">Using default notification accent color found in resources</string>
+
+    <string name="GROOBEE_IN_APP_MESSAGE_DISPLAY_SHOW_ACTIVE_MESSAGE_IS_NULL">No active message found to render</string>
+    <string name="GROOBEE_IN_APP_MESSAGE_DISPLAY_SHOW_ACTIVE_NOT_FOUND_MESSAGE_TYPE">No bindings found for this message type</string>
+    <string name="GROOBEE_IN_APP_MESSAGE_DISPLAY_SHOW_ACTIVE_NOT_FOUND_ACTION">No action url found for action</string>
+
+    <string name="GROOBEE_FIREBASE_MESSAGING_SERVICE_HANDLE_REMOTE_MESSAGE_IS_NULL">Remote message from FCM was null.</string>
+    <string name="GROOBEE_FIREBASE_MESSAGING_SERVICE_HANDLE_REMOTE_MESSAGE_DATA_IS_NULL">Remote message data from FCM was null.</string>
+    <string name="GROOBEE_FIREBASE_MESSAGING_SERVICE_HANDLE_REMOTE_MESSAGE">Got remote message from FCM: %1$s</string>
+    <string name="GROOBEE_FIREBASE_MESSAGING_SERVICE_HANDLE_REMOTE_MESSAGE_ITEM">Adding bundle item from FCM remote data with key: %1$s and value: %2$s</string>
+
+    <string name="GROOBEE_FIREBASE_RECEIVER_ON_RECEIVE">Received broadcast message. Message: %1$s</string>
+    <string name="GROOBEE_FIREBASE_RECEIVER_ON_RECEIVE_NOT_MATCHING_ACTION">The FCM receiver received a message not sent from sdk. Ignoring the message.</string>
+    <string name="GROOBEE_FIREBASE_RECEIVER_HANDLE_RECEIVE_MESSAGE_UNABLE_FCM">Unable to parse FCM message. Intent: %1$s</string>
+    <string name="GROOBEE_FIREBASE_RECEIVER_HANDLE_RECEIVE_MESSAGE_FCM_DELETE">FCM deleted %1$s messages.</string>
+    <string name="GROOBEE_FIREBASE_RECEIVER_HANDLE_RECEIVE_MESSAGE">Push message payload received: %1$s</string>
+
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_NOTIFICATION_STYLE_PICTURE">Rendering push notification with BigPictureStyle</string>
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_NOTIFICATION_STYLE_TEXT">Rendering push notification with BigTextStyle</string>
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_LARGE_ICON_NOTIFICATION_STYLE_FAILED_IMAGE_URL">Failed to download image bitmap for big picture notification style. Url: %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_LARGE_ICON_NOTIFICATION_STYLE_FAILED_IMAGE_SCALE">Failed to scale image bitmap, using original. %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_LARGE_ICON_NOTIFICATION_STYLE_FAILED_IMAGE_DOWNLOAD">Bitmap download failed for push notification. No image will be included with the notification.</string>
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_LARGE_ICON_NOTIFICATION_STYLE_EXCEPTION">Failed to create Big Picture Style. %1$s</string>
+
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_PICTURE_NOTIFICATION_STYLE_FAILED_IMAGE_URL">Failed to download image bitmap for big picture notification style. Url: %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_PICTURE_NOTIFICATION_STYLE_FAILED_IMAGE_SCALE">Failed to scale image bitmap, using original. %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_PICTURE_NOTIFICATION_STYLE_FAILED_IMAGE_DOWNLOAD">Bitmap download failed for push notification. No image will be included with the notification.</string>
+    <string name="GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_PICTURE_NOTIFICATION_STYLE_EXCEPTION">Failed to create Big Picture Style. %1$s</string>
+
+    <string name="GROOBEE_WINDOW_MANAGER_SHOW_ALREADY_ACTIVE">popup already active. Cannot show new popup</string>
+
+    <string name="URI_ACTION_EXECUTE_SCHEME_IS_FILE">Not executing local Uri: %1$s</string>
+    <string name="URI_ACTION_EXECUTE">Executing Uri action from channel %1$s: %2$s. Extras: %3$s</string>
+    <string name="URI_ACTION_ACTIVITY_NOT_FOUND">Could not find appropriate activity to open for deep link %1$s.</string>
+    <string name="URI_ACTION_ACTIVITY_NOT_FOUND_2">Could not find appropriate activity to open </string>
+    <string name="URI_ACTION_BROWSER_NOT_FOUND">Could not find appropriate browser to open for link %1$s</string>
+    <string name="URI_ACTION_DEEP_LINK">Setting deep link activity to %1$s</string>
+    <string name="URI_ACTION_START_MAIN_ACTIVITY">Adding main activity intent to back stack while opening uri from push</string>
+    <string name="URI_ACTION_START_CUSTOM_ACTIVITY">Adding custom back stack activity while opening uri from push: %1$s</string>
+    <string name="URI_ACTION_UNREGISTERED_ACTIVITY">Not adding unregistered activity to the back stack while opening uri from push: %1$s</string>
+    <string name="URI_ACTION_SETTING_ACTIVITY_MOVE_DISABLE">Not adding back stack activity while opening uri from push due to disabled configuration setting.</string>
+
+    <string name="GROOBEE_NOTIFICATION_ACTION_UTILS_EXTRA_IS_NULL">Notification extras were null. Doing nothing.</string>
+    <string name="GROOBEE_NOTIFICATION_ACTION_UTILS_EXCEPTION">Caught exception while adding notification action buttons.</string>
+    <string name="GROOBEE_NOTIFICATION_ACTION_UTILS_HANDLE_NOTIFICATION_ACTION_CLICKED_ACTION_TYPE_IS_NULL">Notification action button type was blank or null. Doing nothing.</string>
+    <string name="GROOBEE_NOTIFICATION_ACTION_UTILS_HANDLE_NOTIFICATION_ACTION_CLICKED_UNKNOWN_ACTION">Unknown notification action button clicked. Doing nothing.</string>
+    <string name="GROOBEE_NOTIFICATION_ACTION_UTILS_HANDLE_NOTIFICATION_ACTION_CLICKED_EXCEPTION">Caught exception while handling notification action button click.</string>
+    <string name="GROOBEE_NOTIFICATION_ACTION_UTILS_ADD_NOTIFICATION_ACTION">Adding notification action with type: %1$s . Setting intent class to notification receiver.</string>
+
+    <string name="GROOBEE_NOTIFICATION_UTILS_HANDLE_CANCEL_NOTIFICATION_ACTION">Cancelling notification action with id: %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_HANDLE_CANCEL_NOTIFICATION_ACTION_EXCEPTION">Exception occurred handling cancel notification intent.</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_HANDLE_NOTIFICATION_OPENED_EXCEPTION">Exception occurred attempting to handle notification opened intent.</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_HANDLE_NOTIFICATION_DELETED">Sending notification deleted broadcast</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_HANDLE_NOTIFICATION_DELETED_EXCEPTION">Exception occurred attempting to handle notification delete intent.</string>
+
+    <string name="GROOBEE_NOTIFICATION_UTILS_NOTIFICATION_OPENED_INTENT_FOUND_DEEP_LINK">Found a deep link %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_NOTIFICATION_OPENED_INTENT">Push notification had no deep link. Opening main activity.</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_LOG_PUSH_DELIVERY_EVENT_CAMPAIGN_ID_IS_NULL">Could not log push delivery event due to null or blank campaign id in push extras bundle: %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_LOG_PUSH_DELIVERY_EVENT_EXTRA_IS_NULL">Could not log push delivery event due to null push extras bundle.</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_GET_ON_CREATE_NOTIFICATION_CHANNEL_ID">Found notification channel in extras with id: %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_GET_ON_CREATE_NOTIFICATION_CHANNEL_ID_IS_NULL">Notification channel from extras is invalid. No channel found with id: %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_GET_ON_CREATE_NOTIFICATION_CHANNEL_ID_DEFAULT_NOT_EXIST">sdk default notification channel does not exist on device; creating</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_CANCEL_NOTIFICATION">Cancelling notification action with id: %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_CANCEL_NOTIFICATION_EXCEPTION">Exception occurred attempting to cancel notification.</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_SEND_NOTIFICATION_OPENED_BROADCAST">Sending notification opened broadcast</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_GET_NOTIFICATION_ID">Using notification id provided in the message\'s extras bundle: %1$s</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_CONTENT_INTENT_EXCEPTION">Error setting content intent.</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_DELETE_INTENT">Setting delete intent.</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_DELETE_INTENT_EXCEPTION">Error setting delete intent.</string>
+
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_URL">Setting large icon for notification</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_RESOURCE">Large icon bitmap url not present in extras. Attempting to use resource id instead.</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_RESOURCE_NOT_FOUND">Large icon resource id not present for notification</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_EXCEPTION">Error setting large notification icon</string>
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_NO_SETTING">Large icon not set for notification</string>
+
+    <string name="GROOBEE_NOTIFICATION_UTILS_SET_STYLE">Setting style for notification</string>
+
+
+</resources>

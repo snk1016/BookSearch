@@ -36,7 +36,7 @@ public class GroobeeNotificationFactory implements InterfaceGroobeeNotificationF
             , Context context, Bundle notificationExtras, Bundle extras) {
 //        GroobeeNotificationUtils.prefetchBitmapsIfNewlyReceivedStoryPush(context, notificationExtras, extras);
 
-        String notificationChannelId = GroobeeNotificationUtils.getOrCreateNotificationChannelId(context, groobeeConfigProvider, notificationExtras);
+        String notificationChannelId = GroobeeNotificationUtils.getOnCreateNotificationChannelId(context, groobeeConfigProvider, notificationExtras);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, notificationChannelId)
                 .setAutoCancel(true);
 

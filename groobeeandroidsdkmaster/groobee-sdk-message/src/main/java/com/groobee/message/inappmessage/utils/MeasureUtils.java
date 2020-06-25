@@ -45,7 +45,6 @@ public class MeasureUtils {
    * spec will tell the view how large it can be at most in the given dimension.
    */
   private static void measure(View child, int width, int height, int widthSpec, int heightSpec) {
-//    Logging.logdPair("\tdesired (w,h)", child.getMeasuredWidth(), child.getMeasuredHeight());
     if (child.getVisibility() == View.GONE) {
       width = 0;
       height = 0;
@@ -54,6 +53,5 @@ public class MeasureUtils {
     child.measure(
         View.MeasureSpec.makeMeasureSpec(width, widthSpec),
         View.MeasureSpec.makeMeasureSpec(height, heightSpec));
-//    Logging.logdPair("\tactual (w,h)", child.getMeasuredWidth(), child.getMeasuredHeight());
   }
 }

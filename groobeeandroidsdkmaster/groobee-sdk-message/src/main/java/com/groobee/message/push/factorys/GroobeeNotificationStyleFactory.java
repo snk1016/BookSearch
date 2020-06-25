@@ -8,8 +8,8 @@ import android.util.DisplayMetrics;
 import androidx.core.app.NotificationCompat;
 
 import com.groobee.message.Groobee;
+import com.groobee.message.R;
 import com.groobee.message.common.Constants;
-import com.groobee.message.providers.GroobeeConfigProvider;
 import com.groobee.message.utils.DisplayUtils;
 import com.groobee.message.utils.LoggerUtils;
 import com.groobee.message.utils.StringUtils;
@@ -27,18 +27,18 @@ public class GroobeeNotificationStyleFactory {
         NotificationCompat.Style style = null;
 
         if (notificationExtras != null && notificationExtras.containsKey(Constants.PUSH_BIG_IMAGE_URL_KEY)) {
-            LoggerUtils.d(TAG, "Rendering push notification with BigPictureStyle");
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_NOTIFICATION_STYLE_PICTURE));
             style = getBigPictureNotificationStyle(context, notificationExtras);
         }
 
-//        if (notificationExtras != null && notificationExtras.containsKey(Constants.PUSH_BIG_LARGE_ICON_KEY)) {
-//            LoggerUtils.d(TAG, "Rendering push notification with BigPictureStyle");
-//            style = getBigLargeIconNotificationStyle(context, notificationExtras);
-//        }
+        if (notificationExtras != null && notificationExtras.containsKey(Constants.PUSH_BIG_LARGE_ICON_KEY) && !notificationExtras.containsKey(Constants.PUSH_BIG_IMAGE_URL_KEY)) {
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_NOTIFICATION_STYLE_PICTURE));
+            style = getBigLargeIconNotificationStyle(context, notificationExtras);
+        }
 
         // Default style is BigTextStyle.
         if (style == null) {
-            LoggerUtils.d(TAG, "Rendering push notification with BigTextStyle");
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_NOTIFICATION_STYLE_TEXT));
             style = getBigTextNotificationStyle(notificationExtras);
         }
 
@@ -58,7 +58,7 @@ public class GroobeeNotificationStyleFactory {
         Bitmap imageBitmap = Groobee.getInstance().getImageLoader().getBitmap(imageUrl);
 
         if (imageBitmap == null) {
-            LoggerUtils.d(TAG, "Failed to download image bitmap for big picture notification style. Url: " + imageUrl);
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_LARGE_ICON_NOTIFICATION_STYLE_FAILED_IMAGE_URL, imageUrl));
             return null;
         }
 
@@ -79,11 +79,11 @@ public class GroobeeNotificationStyleFactory {
                 try {
                     imageBitmap = Bitmap.createScaledBitmap(imageBitmap, bigPictureWidthPixels, bigPictureHeightPixels, true);
                 } catch (Exception e) {
-                    LoggerUtils.e(TAG, "Failed to scale image bitmap, using original.", e);
+                    LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_LARGE_ICON_NOTIFICATION_STYLE_FAILED_IMAGE_SCALE, e.toString()));
                 }
             }
             if (imageBitmap == null) {
-                LoggerUtils.i(TAG, "Bitmap download failed for push notification. No image will be included with the notification.");
+                LoggerUtils.i(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_LARGE_ICON_NOTIFICATION_STYLE_FAILED_IMAGE_DOWNLOAD));
                 return null;
             }
 
@@ -92,7 +92,7 @@ public class GroobeeNotificationStyleFactory {
             setBigPictureSummaryAndTitle(bigPictureNotificationStyle, notificationExtras);
 
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Failed to create Big Picture Style.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_LARGE_ICON_NOTIFICATION_STYLE_EXCEPTION, e.toString()));
             bigPictureNotificationStyle = null;
         }
 
@@ -119,7 +119,7 @@ public class GroobeeNotificationStyleFactory {
         Bitmap imageBitmap = Groobee.getInstance().getImageLoader().getBitmap(imageUrl);
 
         if (imageBitmap == null) {
-            LoggerUtils.d(TAG, "Failed to download image bitmap for big picture notification style. Url: " + imageUrl);
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_PICTURE_NOTIFICATION_STYLE_FAILED_IMAGE_URL, imageUrl));
             return null;
         }
 
@@ -140,11 +140,11 @@ public class GroobeeNotificationStyleFactory {
                 try {
                     imageBitmap = Bitmap.createScaledBitmap(imageBitmap, bigPictureWidthPixels, bigPictureHeightPixels, true);
                 } catch (Exception e) {
-                    LoggerUtils.e(TAG, "Failed to scale image bitmap, using original.", e);
+                    LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_PICTURE_NOTIFICATION_STYLE_FAILED_IMAGE_SCALE, e.toString()));
                 }
             }
             if (imageBitmap == null) {
-                LoggerUtils.i(TAG, "Bitmap download failed for push notification. No image will be included with the notification.");
+                LoggerUtils.i(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_PICTURE_NOTIFICATION_STYLE_FAILED_IMAGE_DOWNLOAD));
                 return null;
             }
 
@@ -157,7 +157,7 @@ public class GroobeeNotificationStyleFactory {
             setBigPictureSummaryAndTitle(bigPictureNotificationStyle, notificationExtras);
 
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Failed to create Big Picture Style.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_STYLE_FACTORY_GET_BIG_PICTURE_NOTIFICATION_STYLE_EXCEPTION, e.toString()));
             bigPictureNotificationStyle = null;
         }
 

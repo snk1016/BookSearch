@@ -77,7 +77,7 @@ public class HtmlModalBindingWrapper extends BindingWrapper {
         layoutWebModalContents.addView(webView);
 
         if(inAppMessage.getMessageType().equals(MessageType.HTML_MODAL)) {
-            webView.loadData(inAppMessage.getBody().getText(), "text/html", "utf-8");
+            webView.loadData(inAppMessage.getBody().getText(), root.getContext().getString(R.string.MIME_TYPE_TEXT_HTML), root.getContext().getString(R.string.CHARACTER_ENCODING_UTF8));
 
             setButtonStyleAppearance(btnWebModalPositive, inAppMessage.getMessageButton().get(ButtonType.POSITIVE), buttonClickListener.get(ButtonType.POSITIVE));
             setButtonStyleAppearance(btnWebModalNegative, inAppMessage.getMessageButton().get(ButtonType.NEGATIVE), buttonClickListener.get(ButtonType.NEGATIVE));

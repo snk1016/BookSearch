@@ -13,12 +13,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.core.app.NotificationCompat;
 
 import com.groobee.message.Groobee;
 import com.groobee.message.GroobeeFirebaseReceiver;
+import com.groobee.message.R;
 import com.groobee.message.common.Channel;
 import com.groobee.message.common.Constants;
 import com.groobee.message.providers.GroobeeConfigProvider;
@@ -43,12 +43,12 @@ public class GroobeeNotificationUtils {
         try {
             if (intent.hasExtra(Constants.PUSH_NOTIFICATION_ID)) {
                 int notificationId = intent.getIntExtra(Constants.PUSH_NOTIFICATION_ID, Constants.PUSH_DEFAULT_NOTIFICATION_ID);
-                LoggerUtils.d(TAG, "Cancelling notification action with id: " + notificationId);
+                LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_HANDLE_CANCEL_NOTIFICATION_ACTION, String.valueOf(notificationId)));
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.cancel(Constants.PUSH_NOTIFICATION_TAG, notificationId);
             }
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Exception occurred handling cancel notification intent.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_HANDLE_CANCEL_NOTIFICATION_ACTION_EXCEPTION), e);
         }
     }
 
@@ -62,16 +62,16 @@ public class GroobeeNotificationUtils {
             }
 
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Exception occurred attempting to handle notification opened intent.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_HANDLE_NOTIFICATION_OPENED_EXCEPTION), e);
         }
     }
 
     public static void handleNotificationDeleted(Context context, Intent intent) {
         try {
-            LoggerUtils.d(TAG, "Sending notification deleted broadcast");
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_HANDLE_NOTIFICATION_DELETED));
             sendPushActionIntent(context, GroobeeNotificationUtils.PUSH_NOTIFICATION_DELETED_SUFFIX, intent.getExtras());
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Exception occurred attempting to handle notification delete intent.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_HANDLE_NOTIFICATION_DELETED_EXCEPTION), e);
         }
     }
 
@@ -85,10 +85,11 @@ public class GroobeeNotificationUtils {
 
         // If a deep link exists, start an ACTION_VIEW intent pointing at the deep link.
         // The intent returned from getStartActivityIntent() is placed on the back stack.
-        // Otherwise, start the intent defined in getStartActivityIntent().
+        // Otherwise, start the intent defined in getStartActivityIntent(). PUSH_URL_LINK_KEY
         String deepLink = intent.getStringExtra(Constants.PUSH_DEEP_LINK_KEY);
+        String urlLink = intent.getStringExtra(Constants.PUSH_URL_LINK_KEY);
         if (!StringUtils.isNullOrBlank(deepLink)) {
-            LoggerUtils.d(TAG, "Found a deep link " + deepLink);
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_NOTIFICATION_OPENED_INTENT_FOUND_DEEP_LINK, deepLink));
 //            boolean useWebView = "true".equalsIgnoreCase(intent.getStringExtra(Constants.PUSH_OPEN_URI_IN_WEBVIEW_KEY));
 //            LoggerUtils.d(TAG, "Use webview set to: " + useWebView);
 
@@ -99,6 +100,10 @@ public class GroobeeNotificationUtils {
             UriAction uriAction = ActionFactory.createUriActionFromUrlString(deepLink, extras, Channel.PUSH);
             uriAction.execute(context);
             return;
+        } else if (StringUtils.isNullOrBlank(deepLink) && !StringUtils.isNullOrBlank(urlLink)) {
+            extras.putString(Constants.PUSH_URL_LINK_KEY, urlLink);
+            UriAction uriAction = ActionFactory.createUriActionFromUrlString(urlLink, extras, Channel.PUSH);
+            uriAction.execute(context);
         } else {
             if (isActMoveEnabled) {
                 UriAction uriAction = ActionFactory.createUriActionFromActMove(intent, true, Channel.PUSH);
@@ -106,7 +111,7 @@ public class GroobeeNotificationUtils {
                 return;
             }
 
-            LoggerUtils.d(TAG, "Push notification had no deep link. Opening main activity.");
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_NOTIFICATION_OPENED_INTENT));
             context.startActivity(UriUtils.getMainActivityIntent(context, extras));
         }
     }
@@ -118,14 +123,14 @@ public class GroobeeNotificationUtils {
             if (!StringUtils.isNullOrBlank(campaignId)) {
                 Groobee.getInstance().logPushDeliveryEvent(campaignId);
             } else {
-                LoggerUtils.d(TAG, "Could not log push delivery event due to null or blank campaign id in push extras bundle: " + pushExtras);
+                LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_LOG_PUSH_DELIVERY_EVENT_CAMPAIGN_ID_IS_NULL, campaignId));
             }
         } else {
-            LoggerUtils.d(TAG, "Could not log push delivery event due to null push extras bundle.");
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_LOG_PUSH_DELIVERY_EVENT_EXTRA_IS_NULL));
         }
     }
 
-    public static String getOrCreateNotificationChannelId(Context context, GroobeeConfigProvider groobeeConfigProvider, Bundle notificationExtras) {
+    public static String getOnCreateNotificationChannelId(Context context, GroobeeConfigProvider groobeeConfigProvider, Bundle notificationExtras) {
         String channelIdFromExtras = getNonBlankStringFromBundle(notificationExtras, Constants.PUSH_NOTIFICATION_CHANNEL_ID_KEY);
         String defaultChannelId = Constants.PUSH_DEFAULT_NOTIFICATION_CHANNEL_ID;
 
@@ -138,20 +143,18 @@ public class GroobeeNotificationUtils {
         // First try to get the channel from the extras
         if (channelIdFromExtras != null) {
             if (notificationManager.getNotificationChannel(channelIdFromExtras) != null) {
-                LoggerUtils.d(TAG, "Found notification channel in extras with id: " + channelIdFromExtras);
+                LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_GET_ON_CREATE_NOTIFICATION_CHANNEL_ID, channelIdFromExtras));
                 return channelIdFromExtras;
             } else {
-                LoggerUtils.d(TAG, "Notification channel from extras is invalid. No channel found with id: " + channelIdFromExtras);
+                LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_GET_ON_CREATE_NOTIFICATION_CHANNEL_ID_IS_NULL, channelIdFromExtras));
             }
         }
 
         // If we get here, we need to use the default channel
         if (notificationManager.getNotificationChannel(defaultChannelId) == null) {
             // If the default doesn't exist, create it now
-            LoggerUtils.d(TAG, "sdk default notification channel does not exist on device; creating");
-            NotificationChannel channel =
-                    new NotificationChannel(defaultChannelId, groobeeConfigProvider.getDefaultNotificationChannelName(),
-                            NotificationManager.IMPORTANCE_DEFAULT);
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_GET_ON_CREATE_NOTIFICATION_CHANNEL_ID_DEFAULT_NOT_EXIST));
+            NotificationChannel channel = new NotificationChannel(defaultChannelId, groobeeConfigProvider.getDefaultNotificationChannelName(), NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(groobeeConfigProvider.getDefaultNotificationChannelDescription());
             notificationManager.createNotificationChannel(channel);
         }
@@ -171,17 +174,17 @@ public class GroobeeNotificationUtils {
 
     public static void cancelNotification(Context context, int notificationId) {
         try {
-            LoggerUtils.d(TAG, "Cancelling notification action with id: " + notificationId);
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_CANCEL_NOTIFICATION, String.valueOf(notificationId)));
             Intent cancelNotificationIntent = new Intent(Constants.PUSH_CANCEL_NOTIFICATION_ACTION).setClass(context, GroobeeNotificationUtils.getNotificationReceiverClass());
             cancelNotificationIntent.putExtra(Constants.PUSH_NOTIFICATION_ID, notificationId);
             IntentUtils.sendComponent(context, cancelNotificationIntent);
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Exception occurred attempting to cancel notification.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_CANCEL_NOTIFICATION_EXCEPTION), e);
         }
     }
 
     static void sendNotificationOpenedBroadcast(Context context, Intent intent) {
-        LoggerUtils.d(TAG, "Sending notification opened broadcast");
+        LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SEND_NOTIFICATION_OPENED_BROADCAST));
         sendPushActionIntent(context, GroobeeNotificationUtils.PUSH_NOTIFICATION_OPENED_SUFFIX, intent.getExtras());
     }
 
@@ -270,17 +273,17 @@ public class GroobeeNotificationUtils {
             PendingIntent pushOpenedPendingIntent = getPushActionPendingIntent(context, Constants.PUSH_CLICKED_ACTION, notificationExtras);
             notificationBuilder.setContentIntent(pushOpenedPendingIntent);
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Error setting content intent.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_CONTENT_INTENT_EXCEPTION), e);
         }
     }
 
     public static void setDeleteIntent(Context context, NotificationCompat.Builder notificationBuilder, Bundle notificationExtras) {
-        LoggerUtils.d(TAG, "Setting delete intent.");
+        LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_DELETE_INTENT));
         try {
             PendingIntent pushDeletedPendingIntent = getPushActionPendingIntent(context, Constants.PUSH_DELETED_ACTION, notificationExtras);
             notificationBuilder.setDeleteIntent(pushDeletedPendingIntent);
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Error setting delete intent.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_DELETE_INTENT_EXCEPTION), e);
         }
     }
 
@@ -301,26 +304,26 @@ public class GroobeeNotificationUtils {
                                                             NotificationCompat.Builder notificationBuilder, Bundle notificationExtras) {
         try {
             if (notificationExtras != null && notificationExtras.containsKey(Constants.PUSH_LARGE_ICON_KEY)) {
-                LoggerUtils.d(TAG, "Setting large icon for notification");
+                LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_URL));
                 String bitmapUrl = notificationExtras.getString(Constants.PUSH_LARGE_ICON_KEY);
                 Bitmap largeNotificationBitmap = Groobee.getInstance().getImageLoader().getBitmap(bitmapUrl);
                 notificationBuilder.setLargeIcon(largeNotificationBitmap);
                 return true;
             }
-            LoggerUtils.d(TAG, "Large icon bitmap url not present in extras. Attempting to use resource id instead.");
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_RESOURCE));
             int largeNotificationIconResourceId = groobeeConfigProvider.getLargeNotificationIconResourceId();
             if (largeNotificationIconResourceId != 0) {
                 Bitmap largeNotificationBitmap = BitmapFactory.decodeResource(context.getResources(), largeNotificationIconResourceId);
                 notificationBuilder.setLargeIcon(largeNotificationBitmap);
                 return true;
             } else {
-                LoggerUtils.d(TAG, "Large icon resource id not present for notification");
+                LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_RESOURCE_NOT_FOUND));
             }
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Error setting large notification icon", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_EXCEPTION), e);
         }
 
-        LoggerUtils.d(TAG, "Large icon not set for notification");
+        LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_LARGE_ICON_NO_SETTING));
         return false;
     }
 
@@ -375,7 +378,7 @@ public class GroobeeNotificationUtils {
      */
     public static void setStyle(Context context, NotificationCompat.Builder notificationBuilder, Bundle notificationExtras) {
         if (notificationExtras != null) {
-            LoggerUtils.d(TAG, "Setting style for notification");
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_UTILS_SET_STYLE));
             NotificationCompat.Style style = GroobeeNotificationStyleFactory.getBigNotificationStyle(context, notificationExtras, notificationBuilder);
             notificationBuilder.setStyle(style);
         }

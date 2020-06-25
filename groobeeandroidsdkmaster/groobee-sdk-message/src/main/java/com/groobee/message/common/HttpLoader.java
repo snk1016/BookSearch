@@ -9,16 +9,29 @@ import java.net.URL;
 
 public class HttpLoader {
     public static Bitmap getBitmapImage(String url) {
-        try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setDoInput(true);
-            conn.connect();
+        final Bitmap[] bitmap = new Bitmap[1];
 
-            InputStream is = conn.getInputStream();
-            return BitmapFactory.decodeStream(is);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    InputStream is = conn.getInputStream();
+                    bitmap[0] = BitmapFactory.decodeStream(is);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    bitmap[0] = null;
+                }
+            }
+        };
+        thread.start();
+
+        try { thread.join(); }
+        catch (InterruptedException e) { e.printStackTrace(); }
+
+        return bitmap[0];
     }
 }

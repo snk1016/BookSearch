@@ -72,7 +72,6 @@ public class AnimatorUtils {
           @Override
           public void onAnimationEnd(Animator animation) {
             super.onAnimationEnd(animation);
-            // Remove fiam from window only after the animation is complete
             completeListener.onComplete();
           }
         };

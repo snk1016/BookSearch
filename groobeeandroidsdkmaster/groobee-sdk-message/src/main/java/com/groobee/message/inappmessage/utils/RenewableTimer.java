@@ -34,16 +34,15 @@ public class RenewableTimer {
   public RenewableTimer() {}
 
   public void start(final Callback c, long duration, long interval) {
-    mCountDownTimer =
-        new CountDownTimer(duration, interval) {
-          @Override
-          public void onTick(long l) {}
+    mCountDownTimer = new CountDownTimer(duration, interval) {
+      @Override
+      public void onTick(long l) {}
 
-          @Override
-          public void onFinish() {
-            c.onFinish();
-          }
-        }.start();
+      @Override
+      public void onFinish() {
+        c.onFinish();
+      }
+    }.start();
   }
 
   public void cancel() {

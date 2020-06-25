@@ -3,24 +3,63 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
 bintray {
-    user = 'songnk1016'
-    key = '8bfe1a556b90dd54cccdcdafe6ddc88642730f3d'
+    user = BINTRAY_USER
+    key = BINTRAY_API_KEY
+
+    configurations = ['archives']
 
     publish = true
 
     pkg {
-        repo = 'test'
-        name = 'com.groobee.message'
+        repo = BINTRAY_REPOSITORY
+        name = GROUP_ID
         licenses = ['Apache-2.0']
-        websiteUrl = 'https://github.com/snk1016/groobee-message'
-        issueTrackerUrl = 'https://github.com/snk1016/groobee-message/issues'
-        vcsUrl = 'https://github.com/snk1016/groobee-message.git'
-        githubRepo = 'snk1016/groobee-message'
+        websiteUrl = GITHUB_URL
+        issueTrackerUrl = "${GITHUB_URL}/issues"
+        vcsUrl = "${GITHUB_URL}.git"
+        githubRepo = GITHUB_REPOSITORY
+        githubReleaseNotesFile = 'CONTRIBUTING.md'
 
         version {
-            name = '0.1.4'
-            vcsTag = '0.1.4'
+            name = SDK_VERSION
+            vcsTag = SDK_VERSION
             released = new Date()
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name SDK_NAME
+            description SDK_DESCRIPTION
+            url GITHUB_URL
+            inceptionYear SDK_DEPLOY_YEAR
+
+            packaging 'aar'
+            groupId GROUP_ID
+            artifactId SDK_NAME
+            version SDK_VERSION
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            scm {
+                connection "${GITHUB_URL}.git"
+                url GITHUB_URL
+
+            }
+            developers {
+                developer {
+                    id DEVELOPER_ID
+                    name DEVELOPER_NAME
+                    email DEVELOPER_EMAIL
+                }
+            }
         }
     }
 }
@@ -30,22 +69,27 @@ tasks.withType(Javadoc).all {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName SDK_VERSION
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -68,47 +112,43 @@ dependencies {
 
     compileOnly "com.google.firebase:firebase-messaging:${FIREBASE_PUSH_MESSAGING_VERSION}"
 
-    implementation 'com.google.dagger:dagger:2.16'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+    implementation 'com.google.dagger:dagger:2.24'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.24'
 
     implementation 'com.google.android.gms:play-services-tasks:17.0.0'
     implementation 'androidx.browser:browser:1.0.0'
-}
-
-install {
-    repositories.mavenInstaller {
-        pom.project {
-            name 'GroobeeSDK'
-            description 'A wrapper library for basic functions of Google Play Services APIs'
-            url 'https://github.com/snk1016/groobee-message'
-            inceptionYear '2020'
-
-            packaging 'aar'
-            groupId 'com.groobee.message'
-            artifactId 'groobee-sdk-message'
-            version '0.1.1'
-
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-            scm {
-                connection 'https://github.com/snk1016/groobee-message.git'
-                url 'https://github.com/snk1016/groobee-message'
-
-            }
-            developers {
-                developer {
-                    name 'Google'
-                }
-            }
-        }
-    }
+    implementation 'com.android.volley:volley:1.1.1'
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.5'
+    gradleVersion = '3.6.3'
+}
+
+// JCenter publish
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+// Optional docs
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+// Optional javadoc
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar // Optional
+    archives sourcesJar
+}
+
+task findConventions {
+    doLast {
+        println project.getConvention()
+    }
 }

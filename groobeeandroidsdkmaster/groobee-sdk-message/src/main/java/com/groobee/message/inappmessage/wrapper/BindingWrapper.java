@@ -2,6 +2,7 @@ package com.groobee.message.inappmessage.wrapper;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;

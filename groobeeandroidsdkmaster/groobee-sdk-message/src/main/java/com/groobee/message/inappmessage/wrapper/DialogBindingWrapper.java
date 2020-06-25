@@ -70,12 +70,6 @@ public class DialogBindingWrapper extends BindingWrapper {
             setButtonStyleAppearance(btnDialogNegative, inAppMessage.getMessageButton().get(ButtonType.NEGATIVE), buttonClickListener.get(ButtonType.NEGATIVE));
         }
 
-//        layoutRoot.requestFocus();
-//        layoutRoot.setFocusableInTouchMode(true);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            layoutRoot.setFocusedByDefault(true);
-//        }
-
         setDismissListener(dismissClickListener);
 
         return layoutListener;

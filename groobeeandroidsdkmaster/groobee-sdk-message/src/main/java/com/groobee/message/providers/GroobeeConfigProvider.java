@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
+import com.groobee.message.R;
 import com.groobee.message.utils.LoggerUtils;
 import com.groobee.message.utils.PackageUtils;
 
@@ -19,7 +20,7 @@ public class GroobeeConfigProvider extends TemporaryConfigProvider {
     }
 
     public String getGroobeeApiKey() {
-        return this.getStringValue("groobee_api_key", "");
+        return this.getStringValue(context.getString(R.string.KEY_VARIABLE_GROOBEE_API_KEY), "");
     }
 
     public int getSmallNotificationIconResourceId() {
@@ -31,30 +32,32 @@ public class GroobeeConfigProvider extends TemporaryConfigProvider {
     }
 
     public String getDefaultNotificationChannelName() {
-        return this.getStringValue("default_notification_channel_name", "General");
+        return this.getStringValue(context.getString(R.string.KEY_VARIABLE_DEFAULT_NOTIFICATION_CHANNEL_NAME), "General");
     }
 
     public String getDefaultNotificationChannelDescription() {
-        return this.getStringValue("default_notification_channel_description", "");
+        return this.getStringValue(context.getString(R.string.KEY_VARIABLE_DEFAULT_NOTIFICATION_CHANNEL_DESCRIPTION), "");
     }
 
     public boolean getHandlePushDeepLinks() {
-        return this.getBooleanValue("handle_push_deep_links", false);
+        return this.getBooleanValue(context.getString(R.string.KEY_VARIABLE_HANDLE_PUSH_DEEP_LINKS), false);
     }
 
     public boolean getPushMoveActivityEnabled() {
-        return this.getBooleanValue("push_move_activity_enabled", true);
+        return this.getBooleanValue(context.getString(R.string.KEY_VARIABLE_PUSH_MOVE_ACTIVITY_ENABLED), true);
     }
 
     public String getPushMoveActivityClassName() {
-        return this.getStringValue("push_move_activity_class_name", "");
+        return this.getStringValue(context.getString(R.string.KEY_VARIABLE_PUSH_MOVE_ACTIVITY_CLASS_NAME), "");
     }
 
     public int getApplicationIconResourceId() {
         int resourceId = 0;
 
-        if (this.mConfigTemp.containsKey("application_icon")) {
-            resourceId = (Integer)this.mConfigTemp.get("application_icon");
+        String applicationIcon = context.getString(R.string.KEY_VARIABLE_APPLICATION_ICON);
+
+        if (this.mConfigTemp.containsKey(applicationIcon)) {
+            resourceId = (Integer)this.mConfigTemp.get(applicationIcon);
         } else {
             String packageName = this.context.getPackageName();
 
@@ -62,34 +65,35 @@ public class GroobeeConfigProvider extends TemporaryConfigProvider {
                 ApplicationInfo var3 = this.context.getPackageManager().getApplicationInfo(packageName, 0);
                 resourceId = var3.icon;
             } catch (PackageManager.NameNotFoundException var6) {
-                LoggerUtils.e(TAG, "Cannot find package named " + packageName);
+                LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_CONFIG_PROVIDER_GET_APPLICATION_ICON_RESOURCE_ID_EXCEPTION, packageName));
             }
 
-            this.mConfigTemp.put("application_icon", resourceId);
+            this.mConfigTemp.put(applicationIcon, resourceId);
         }
 
         return resourceId;
     }
 
     private int getNotificationIconResourceId(GroobeeConfigProvider.iconSize size) {
-        String iconType = size.equals(iconSize.large) ? "push_large_notification_icon" : "push_small_notification_icon";
+        String iconType = size.equals(iconSize.large) ? context.getString(R.string.KEY_VARIABLE_PUSH_LARGE_NOTIFICATION_ICON) : context.getString(R.string.KEY_VARIABLE_PUSH_SMALL_NOTIFICATION_ICON);
         int resourceId = 0;
+        String defType = context.getString(R.string.DEF_TYPE_DRAWABLE);
+
         if (mConfigTemp.containsKey(iconType)) {
             resourceId = (Integer)mConfigTemp.get(iconType);
         } else if (runtimeConfigProvider.contains(iconType)) {
             String path = runtimeConfigProvider.getData(iconType, "");
 
             String[] detail_path = path.split(":");
-            String defType = "drawable";
 
             if(detail_path.length > 1)
                 defType = detail_path[1].substring(0, detail_path[1].indexOf("/"));
 
             resourceId = context.getResources().getIdentifier(path, defType, PackageUtils.getResourcePackageName(context));
             mConfigTemp.put(iconType, resourceId);
-            LoggerUtils.d(TAG, "Using runtime override value for key: " + iconType + " and value: " + path);
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_CONFIG_PROVIDER_GET_NOTIFICATION_ICON_RESOURCE_ID, iconType, path));
         } else {
-            resourceId = context.getResources().getIdentifier(iconType, "drawable", PackageUtils.getResourcePackageName(context));
+            resourceId = context.getResources().getIdentifier(iconType, defType, PackageUtils.getResourcePackageName(context));
             mConfigTemp.put(iconType, resourceId);
         }
 
@@ -97,12 +101,12 @@ public class GroobeeConfigProvider extends TemporaryConfigProvider {
     }
 
     public int getDefaultNotificationAccentColor() {
-        Integer var1 = this.getColorValue("default_notification_accent_color");
+        Integer var1 = this.getColorValue(context.getString(R.string.KEY_VARIABLE_DEFAULT_NOTIFICATION_ACCENT_COLOR));
         if (var1 != null) {
-            LoggerUtils.d(TAG, "Using default notification accent color found in resources");
+            LoggerUtils.d(TAG, context.getString(R.string.GROOBEE_CONFIG_PROVIDER_GET_DEFAULT_NOTIFICATION_ACCENT_COLOR));
             return var1;
         } else {
-            return this.getIntValue("default_notification_accent_color", 0);
+            return this.getIntValue(context.getString(R.string.KEY_VARIABLE_DEFAULT_NOTIFICATION_ACCENT_COLOR), 0);
         }
     }
 

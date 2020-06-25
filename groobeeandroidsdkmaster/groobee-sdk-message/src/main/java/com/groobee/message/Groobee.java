@@ -1,22 +1,21 @@
 package com.groobee.message;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-
 import com.groobee.message.common.GroobeeImageLoader;
+import com.groobee.message.common.GroobeeServiceManager;
+import com.groobee.message.common.ServicesConstants;
 import com.groobee.message.common.thread.HandlerUncaughtException;
 import com.groobee.message.common.thread.WorkingThreadFactory;
+import com.groobee.message.common.thread.WorkingThreadLarge;
 import com.groobee.message.common.thread.WorkingThreadSmall;
 import com.groobee.message.inappmessage.ButtonType;
 import com.groobee.message.inappmessage.MessageType;
-import com.groobee.message.inappmessage.NoOpDisplayCallbacks;
 import com.groobee.message.inappmessage.displays.GroobeeInAppMessageDisplay;
 import com.groobee.message.inappmessage.model.InAppMessage;
 import com.groobee.message.inappmessage.model.MessageButton;
@@ -29,11 +28,12 @@ import com.groobee.message.providers.RuntimeConfigProvider;
 import com.groobee.message.push.interfaces.InterfaceGroobeeNotificationFactory;
 import com.groobee.message.utils.LoggerUtils;
 import com.groobee.message.utils.StringUtils;
+import com.groobee.message.utils.WebViewUtils;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import javax.inject.Singleton;
 
@@ -52,32 +52,29 @@ public class Groobee {
 
     private WorkingThreadSmall workingThreadSmall;
 
+    private WorkingThreadLarge workingThreadLarge;
+
 //    private GroobeeInAppMessageDisplay groobeeInAppMessageDisplay;
 
-    private RenewableTimer impressionTimer;
-    private RenewableTimer autoDismissTimer;
+//    private RenewableTimer impressionTimer;
+//    private RenewableTimer autoDismissTimer;
 
-    private BindingWrapperFactory bindingWrapperFactory;
+//    private BindingWrapperFactory bindingWrapperFactory;
 
-    private AnimatorUtils animatorUtils;
+//    private AnimatorUtils animatorUtils;
 
     private GroobeeConfigProvider groobeeConfigProvider;
+
+    private RuntimeConfigProvider runtimeConfigProvider;
+
+    private GroobeeServiceManager groobeeServiceManager;
+
+    private SharedPreferences sharedPreferences;
 
     private static class LazyHolder {
         private static final Groobee INSTANCE = new Groobee();
     }
 
-    //    public static Groobee getInstance(Context context) {
-//        if (groobee == null) {
-//            groobee = new Groobee(context);
-//            synchronized (Groobee.class) {
-//                groobee = new Groobee(context);
-//                return groobee;
-//            }
-//        }
-//
-//        return groobee;
-//    }
     public static Groobee getInstance() {
         return LazyHolder.INSTANCE;
     }
@@ -90,88 +87,33 @@ public class Groobee {
 
         workingThreadSmall = new WorkingThreadSmall("identifier", workingThreadFactory);
 
-        impressionTimer = new RenewableTimer();
-        autoDismissTimer = new RenewableTimer();
+        workingThreadLarge = new WorkingThreadLarge("identifier-large", workingThreadFactory);
 
-        animatorUtils = new AnimatorUtils();
+//        impressionTimer = new RenewableTimer();
+//        autoDismissTimer = new RenewableTimer();
+//
+//        animatorUtils = new AnimatorUtils();
     }
-
-//    public Groobee(Context context) {
-//        this.context = context;
-//        groobeeImageLoader = new GroobeeImageLoader(context);
-//
-//
-//
-//        bindingWrapperFactory = new BindingWrapperFactory(context);
-//
-//        groobeeInAppMessageDisplay = new GroobeeInAppMessageDisplay(impressionTimer, autoDismissTimer, context, bindingWrapperFactory, animatorUtils);
-//    }
 
     public static boolean configure(Context context, GroobeeConfig config) {
         LoggerUtils.d(TAG, "configure() called with configuration: " + config);
 
-        if (getInstance() == null) {
-            synchronized (Groobee.class) {
-                if (getInstance() == null) {
-                    RuntimeConfigProvider runtimeConfigProvider = new RuntimeConfigProvider(context);
-
-                    if(config != null) {
-                        runtimeConfigProvider.setRuntimeConfig(config);
-                        return true;
-                    }
-
-                    runtimeConfigProvider.clean();
-                    return true;
-                }
-            }
-        }
-
+        getInstance().runtimeConfigProvider = new RuntimeConfigProvider(context);
         getInstance().context = context.getApplicationContext();
         getInstance().groobeeImageLoader = new GroobeeImageLoader(context);
-//        getInstance().bindingWrapperFactory = new BindingWrapperFactory(context.);
-//        getInstance().groobeeInAppMessageDisplay = new GroobeeInAppMessageDisplay(getInstance().impressionTimer
-//                , getInstance().autoDismissTimer
-//                , context, getInstance().bindingWrapperFactory, getInstance().animatorUtils);
         getInstance().groobeeConfigProvider = new GroobeeConfigProvider(context);
+        getInstance().sharedPreferences = context.getSharedPreferences(RuntimeConfigProvider.PREFERENCES_NAME, Context.MODE_PRIVATE);
+        getInstance().groobeeServiceManager = new GroobeeServiceManager(context);
 
-//        List<ComponentRegistrar> registrars = ComponentDiscovery.forContext(context, ComponentDiscoveryService.class).discover();
-//
-//        getInstance().componentRuntime = new ComponentRuntime(UI_EXECUTOR, registrars, Component.of(context, Context.class), Component.of(getInstance(), Groobee.class));
+        if(config != null) {
+            getInstance().runtimeConfigProvider.setRuntimeConfig(config);
+            return true;
+        }
+
+        getInstance().runtimeConfigProvider.clean();
 
         return false;
     }
-
-//    public static boolean configure(Application application, Context context, GroobeeConfig config) {
-//        LoggerUtils.d(TAG, "configure() called with configuration: " + config);
-//
-//        if (groobee == null) {
-//            synchronized (Groobee.class) {
-//                if (groobee == null) {
-//                    RuntimeConfigProvider runtimeConfigProvider = new RuntimeConfigProvider(context);
-//
-//                    if(config != null) {
-//                        runtimeConfigProvider.setRuntimeConfig(config);
-//                        return true;
-//                    }
-//
-//                    runtimeConfigProvider.clean();
-//                    return true;
-//                }
-//            }
-//        }
-//
-//        return false;
-//    }
-
-//    @KeepForSdk
-//    public <T> T get(Class<T> anInterface) {
-//        checkNotDeleted();
-//        return componentRuntime.get(anInterface);
-//    }
-//
-//    private void checkNotDeleted() {
-//        Preconditions.checkState(!deleted.get(), "Groobee was deleted");
-//    }
 
     public GroobeeInAppMessageDisplay getActivityLifecycleCallbacks() {
         return GroobeeInAppMessageDisplay.getInstance();
@@ -195,50 +137,12 @@ public class Groobee {
         return interfaceGroobeeNotificationFactory;
     }
 
-//    public void onActivityPaused(Activity activity) {
-//        if(groobeeInAppMessageDisplay != null)
-//            groobeeInAppMessageDisplay.onActivityPaused(activity);
-//    }
-//
-//    public void onActivityDestroyed(Activity activity) {
-//        if(groobeeInAppMessageDisplay != null)
-//            groobeeInAppMessageDisplay.onActivityDestroyed(activity);
-//    }
-//
-//    public void onActivityResumed(Activity activity) {
-//        if(groobeeInAppMessageDisplay != null)
-//            groobeeInAppMessageDisplay.onActivityResumed(activity);
-//    }
-
     public void logPushNotificationActionClicked(final String campaignId, final String actionId, final String actionType) {
         LoggerUtils.d(TAG, "call method logPushNotificationActionClicked");
 
         /*
         Push 클릭한 내용 서버 전송
         * */
-//        if (!j()) {
-//            this.d.execute(new Runnable() {
-//                public void run() {
-//                    try {
-//                        if (StringUtils.isNullOrBlank(campaignId)) {
-//                            AppboyLogger.w(Appboy.l, "Campaign ID cannot be null or blank. Not logging push notification action clicked.");
-//                            return;
-//                        }
-//
-//                        if (StringUtils.isNullOrBlank(actionId)) {
-//                            AppboyLogger.w(Appboy.l, "Action ID cannot be null or blank");
-//                            return;
-//                        }
-//
-//                        Appboy.this.i.a(cq.b(campaignId, actionId, actionType));
-//                    } catch (Exception var2) {
-//                        AppboyLogger.w(Appboy.l, "Failed to log push notification action clicked.", var2);
-//                        Appboy.this.a((Throwable)var2);
-//                    }
-//
-//                }
-//            });
-//        }
     }
 
     public void logPushNotificationOpened(final Intent intent) {
@@ -250,10 +154,17 @@ public class Groobee {
             @Override
             public void run() {
                 try {
-                    if (intent.hasExtra("cid")) {
-                        String cid = intent.getStringExtra("cid");
+                    String key_cid = context.getString(R.string.KEY_VARIABLE_CAMPAIGN_ID);
+
+                    if (intent.hasExtra(key_cid)) {
+                        String cid = intent.getStringExtra(key_cid);
                         if (!StringUtils.isNullOrBlank(cid)) {
                             LoggerUtils.i(TAG, "Logging push click to notification. Campaign Id: " + cid);
+
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            runtimeConfigProvider.addData(editor, RuntimeConfigProvider.PREFERENCES_PUSH_UUID, cid);
+                            editor.apply();
+
                         } else {
                             LoggerUtils.i(TAG, "Not Found campaign Id with this notification");
                         }
@@ -265,27 +176,6 @@ public class Groobee {
                 }
             }
         });
-
-//        if (!j()) {
-//            this.d.execute(new Runnable() {
-//                public void run() {
-//                    try {
-//                        String var1 = intent.getStringExtra("cid");
-//                        if (!StringUtils.isNullOrBlank(var1)) {
-//                            AppboyLogger.i(Appboy.l, "Logging push click to Appboy. Campaign Id: " + var1);
-//                            Appboy.this.logPushNotificationOpened(var1);
-//                        } else {
-//                            AppboyLogger.i(Appboy.l, "No campaign Id associated with this notification. Not logging push click to Appboy.");
-//                        }
-//
-//                        Appboy.a((Intent)intent, (bu)Appboy.this.i);
-//                    } catch (Exception var2) {
-//                        AppboyLogger.w(Appboy.l, "Error logging push notification", var2);
-//                    }
-//
-//                }
-//            });
-//        }
     }
 
     public void logPushDeliveryEvent(final String campaignId) {
@@ -294,35 +184,10 @@ public class Groobee {
          * push를 받았을 때에 대한 통신
          * delivery!
          * */
-//        if (!j()) {
-//            this.d.execute(new Runnable() {
-//                public void run() {
-//                    try {
-//                        if (!Appboy.this.f.m()) {
-//                            AppboyLogger.v(Appboy.l, "Push delivery events are disabled via server configuration. Not logging event.");
-//                            return;
-//                        }
-//
-//                        if (StringUtils.isNullOrBlank(campaignId)) {
-//                            AppboyLogger.w(Appboy.l, "Campaign ID cannot be null or blank for push delivery event.");
-//                            return;
-//                        }
-//
-//                        Appboy.this.i.a(cp.i(campaignId));
-//                    } catch (Exception var2) {
-//                        AppboyLogger.w(Appboy.l, "Failed to log push delivery event.", var2);
-//                        Appboy.this.a((Throwable)var2);
-//                    }
-//
-//                }
-//            });
-//        }
     }
 
     public void showDialog(final Activity activity) {
         LoggerUtils.d(TAG, "call showDialog");
-
-
 
         workingThreadSmall.execute(new Runnable() {
             @Override
@@ -353,7 +218,7 @@ public class Groobee {
     }
 
     public void showDialog(final Activity activity, final View.OnClickListener onClickListener) {
-        LoggerUtils.d(TAG, "call showDialog");
+        LoggerUtils.d(TAG, "call showDialog " + context.getString(R.string.txt_test));
 
         workingThreadSmall.execute(new Runnable() {
             @Override
@@ -374,6 +239,7 @@ public class Groobee {
                     MessageButton messageButton2 = new MessageButton.Builder()
                             .setText("Button2")
 //                            .setActivityName(activity.getClass().getName())
+
 //                            .setActivityName("com.example.test.groobee2.ActivityScreen3")
                             .setOnClickListener(onClickListener)
                             .build();
@@ -387,7 +253,8 @@ public class Groobee {
 
                     Map<String, String> data = new HashMap<>();
 
-                    InAppMessage inAppMessage = new InAppMessage(title, body, "https://static.hubzum.zumst.com/hubzum/2018/03/21/10/b4af8da309e846cc87927e8e6f939b23.jpg"
+//                    InAppMessage inAppMessage = new InAppMessage(title, body, "https://static.hubzum.zumst.com/hubzum/2018/03/21/10/b4af8da309e846cc87927e8e6f939b23.jpg"
+                    InAppMessage inAppMessage = new InAppMessage(title, body, "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS_boWRLNjwhmPe_XoV2Ed72Ad5z1cRhFt100de4oV9sxbj4gJW&usqp=CAU"
                             , messageButton, data, MessageType.DIALOG);
 //                            , messageButton, data, MessageType.HTML_MODAL);
 
@@ -402,14 +269,53 @@ public class Groobee {
         });
     }
 
-    private static class UiExecutor implements Executor {
-        private static final Handler HANDLER = new Handler(Looper.getMainLooper());
+    public void setWebViewLogger(final String url) {
+        LoggerUtils.d(TAG, "call setWebViewLogger");
 
-        @Override
-        public void execute(@NonNull Runnable command) {
-            HANDLER.post(command);
-        }
+        workingThreadSmall.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String grb_ck = WebViewUtils.getCookieById(url, context.getString(R.string.KEY_VARIABLE_GROOBEE_CK));
+                    String grb_ui = WebViewUtils.getCookieById(url, context.getString(R.string.KEY_VARIABLE_GROOBEE_UI));
+                    Log.d("nh", "grb_ck : " + grb_ck + " grb_ui : " + grb_ui);
+                } catch (Exception e) {
+                    LoggerUtils.w(TAG, "Error logging webview cookie", e);
+                }
+            }
+        });
     }
+
+    public void logTestService(final Activity activity) {
+        LoggerUtils.d(TAG, "call setWebViewLogger");
+
+        workingThreadSmall.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject request = new JSONObject();
+                    request.put("test_id", 1);
+                    request.put("test_body", "가나다라");
+                    request.put("test_title", "제목!!");
+
+                    groobeeServiceManager.sendRequest(activity, ServicesConstants.API_TEST, request);
+                } catch (Exception e) {
+                    LoggerUtils.w(TAG, "Error logging webview cookie", e);
+                }
+            }
+        });
+    }
+
+//    groobeeServiceManager
+
+//    private static class UiExecutor implements Executor {
+//        private static final Handler HANDLER = new Handler(Looper.getMainLooper());
+//
+//        @Override
+//        public void execute(@NonNull Runnable command) {
+//            HANDLER.post(command);
+//        }
+//    }
 }
 /*
  * api통신

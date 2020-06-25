@@ -2,14 +2,13 @@ package com.groobee.message.inappmessage.displays;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
+import com.groobee.message.R;
 import com.groobee.message.inappmessage.utils.SwipeDismissTouchListener;
 import com.groobee.message.inappmessage.wrapper.BindingWrapper;
 import com.groobee.message.utils.LoggerUtils;
@@ -28,21 +27,18 @@ public class GroobeeWindowManager {
 
     public void show(@NonNull final BindingWrapper bindingWrapper, @NonNull Activity activity, WindowManager.LayoutParams params) {
         if (isDisplayed()) {
-            LoggerUtils.d(TAG, "Fiam already active. Cannot show new Fiam.");
+            LoggerUtils.d(TAG, activity.getString(R.string.GROOBEE_WINDOW_MANAGER_SHOW_ALREADY_ACTIVE));
             return;
         }
 
         final WindowManager windowManager = getWindowManager(activity);
         windowManager.addView(bindingWrapper.getRootView(), params);
 
-        Log.d("nh", "isFocusable : " + bindingWrapper.getRootView().isFocusable());
-        if(!bindingWrapper.getRootView().isFocusable()) {
-            bindingWrapper.getRootView().setFocusable(true);
-            bindingWrapper.getRootView().setFocusableInTouchMode(true);
-            bindingWrapper.getRootView().requestFocus();
-        }
-
-        Log.d("nh", "isFocusable : " + bindingWrapper.getRootView().isFocusable());
+//        if(!bindingWrapper.getRootView().isFocusable()) {
+//            bindingWrapper.getRootView().setFocusable(true);
+//            bindingWrapper.getRootView().setFocusableInTouchMode(true);
+//            bindingWrapper.getRootView().requestFocus();
+//        }
 
         if (bindingWrapper.canSwipeToDismiss()) {
             SwipeDismissTouchListener listener = getSwipeListener(bindingWrapper, windowManager, params);

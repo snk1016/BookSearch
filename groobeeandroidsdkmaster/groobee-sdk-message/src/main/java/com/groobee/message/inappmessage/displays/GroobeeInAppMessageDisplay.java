@@ -2,8 +2,6 @@ package com.groobee.message.inappmessage.displays;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
@@ -19,7 +17,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 
-import com.groobee.message.Groobee;
+import com.groobee.message.R;
 import com.groobee.message.inappmessage.ButtonType;
 import com.groobee.message.inappmessage.GroobeeActivityLifecycleCallbacks;
 import com.groobee.message.inappmessage.MessageType;
@@ -103,33 +101,14 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
         this.windowManager = new GroobeeWindowManager();
         this.animator = new AnimatorUtils();
     }
-//    public GroobeeInAppMessageDisplay(RenewableTimer impressionTimer, RenewableTimer autoDismissTimer
-//            , Context context, BindingWrapperFactory bindingWrapperFactory
-//            , AnimatorUtils animator) {
-//        super();
-//        this.impressionTimer = impressionTimer;
-//        this.autoDismissTimer = autoDismissTimer;
-//        this.windowManager = new GroobeeWindowManager();
-//        this.bindingWrapperFactory = bindingWrapperFactory;
-//        this.context = context;
-//        this.animator = animator;
-//    }
-
-//    @NonNull
-//    @Keep
-//    public static GroobeeInAppMessageDisplay getInstance() {
-////        return Groobee.getInstance().get(GroobeeInAppMessageDisplay.class);
-//    }
 
     @Override
     public void onActivityStarted(final Activity activity) {
-        // Register FIAM listener with the headless sdk.
         super.onActivityStarted(activity);
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        LoggerUtils.d(TAG, "onActivityPaused");
         removeDisplayed(activity);
         notifyDismiss();
         super.onActivityPaused(activity);
@@ -137,7 +116,6 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        LoggerUtils.d(TAG, "onActivityDestroyed");
         removeDisplayed(activity);
         notifyDismiss();
         super.onActivityDestroyed(activity);
@@ -146,7 +124,6 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
     @Override
     public void onActivityResumed(Activity activity) {
         if (inAppMessage != null) {
-            LoggerUtils.d(TAG, "showActive");
             showActive(activity);
 //            showMessagePopup(activity, inAppMessage, callbacks);
         }
@@ -167,7 +144,7 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
 
     private void showActive(@NonNull final Activity activity) {
         if (inAppMessage == null) {
-            LoggerUtils.e(TAG, "No active message found to render");
+            LoggerUtils.e(TAG, activity.getString(R.string.GROOBEE_IN_APP_MESSAGE_DISPLAY_SHOW_ACTIVE_MESSAGE_IS_NULL));
             return;
         }
 
@@ -191,7 +168,7 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
                 bindingWrapper = bindingWrapperFactory.createHtmlModalBindingWrapper(inAppMessage);
                 break;
             default:
-                LoggerUtils.e(TAG, "No bindings found for this message type");
+                LoggerUtils.e(TAG, activity.getString(R.string.GROOBEE_IN_APP_MESSAGE_DISPLAY_SHOW_ACTIVE_NOT_FOUND_MESSAGE_TYPE));
                 // so we should break out completely and not attempt to show anything
                 return;
         }
@@ -207,7 +184,6 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
     }
 
     private void dismiss(Activity activity) {
-        LoggerUtils.d(TAG, "Dismissing");
         notifyDismiss();
         removeDisplayed(activity);
         inAppMessage = null;
@@ -216,7 +192,6 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
 
     private void removeDisplayed(Activity activity) {
         if (windowManager.isDisplayed()) {
-            LoggerUtils.d(TAG, "removeDisplayed");
             windowManager.dismiss(activity);
             cancelTimers();
         }
@@ -297,7 +272,7 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
                         }
                     };
                 } else {
-                    LoggerUtils.e(TAG, "No action url found for action.");
+                    LoggerUtils.e(TAG, activity.getString(R.string.GROOBEE_IN_APP_MESSAGE_DISPLAY_SHOW_ACTIVE_NOT_FOUND_ACTION));
                     actionListener = dismissListener;
                 }
             }
@@ -331,7 +306,7 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
                 public void onFinish() {
                     if (inAppMessage != null && callbacks != null) {
 //                            LoggerUtils.i(TAG, "Impression timer onFinish for: " + inAppMessage.getCampaignMetadata().getCampaignId());
-                        LoggerUtils.i(TAG, "Impression timer onFinish for: " + inAppMessage.getTitle().getText());
+//                        LoggerUtils.i(TAG, "Impression timer onFinish for: " + inAppMessage.getTitle().getText());
 
                         callbacks.impressionDetected();
                     }
@@ -362,15 +337,6 @@ public class GroobeeInAppMessageDisplay extends GroobeeActivityLifecycleCallback
 //                animator.slideIntoView(context, bindingWrapper.getRootView(), BOTTOM);
             }
         });
-
-//        activity.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                windowManager.show(bindingWrapper, activity, getLayoutParams(messageType));
-////                animator.slideIntoView(context, bindingWrapper.getRootView(), TOP);
-////                animator.slideIntoView(context, bindingWrapper.getRootView(), BOTTOM);
-//            }
-//        });
     }
 
     private void cancelTimers() {

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.core.app.NotificationCompat;
 
 import com.groobee.message.Groobee;
+import com.groobee.message.R;
 import com.groobee.message.common.Constants;
 import com.groobee.message.providers.GroobeeConfigProvider;
 import com.groobee.message.utils.IntentUtils;
@@ -39,7 +40,7 @@ public class GroobeeNotificationActionUtils {
     public static void addNotificationActions(Context context, NotificationCompat.Builder notificationBuilder, Bundle notificationExtras) {
         try {
             if (notificationExtras == null) {
-                LoggerUtils.w(TAG, "Notification extras were null. Doing nothing.");
+                LoggerUtils.w(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_ACTION_UTILS_EXTRA_IS_NULL));
                 return;
             }
 
@@ -49,7 +50,7 @@ public class GroobeeNotificationActionUtils {
                 actionIndex++;
             }
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Caught exception while adding notification action buttons.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_ACTION_UTILS_EXCEPTION), e);
         }
     }
 
@@ -65,7 +66,7 @@ public class GroobeeNotificationActionUtils {
         try {
             String actionType = intent.getStringExtra(Constants.PUSH_ACTION_TYPE_KEY);
             if (StringUtils.isNullOrBlank(actionType)) {
-                LoggerUtils.w(TAG, "Notification action button type was blank or null. Doing nothing.");
+                LoggerUtils.w(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_ACTION_UTILS_HANDLE_NOTIFICATION_ACTION_CLICKED_ACTION_TYPE_IS_NULL));
                 return;
             }
 
@@ -97,10 +98,10 @@ public class GroobeeNotificationActionUtils {
             } else if (actionType.equals(Constants.PUSH_ACTION_TYPE_NONE)) {
                 GroobeeNotificationUtils.cancelNotification(context, notificationId);
             } else {
-                LoggerUtils.w(TAG, "Unknown notification action button clicked. Doing nothing.");
+                LoggerUtils.w(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_ACTION_UTILS_HANDLE_NOTIFICATION_ACTION_CLICKED_UNKNOWN_ACTION));
             }
         } catch (Exception e) {
-            LoggerUtils.e(TAG, "Caught exception while handling notification action button click.", e);
+            LoggerUtils.e(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_ACTION_UTILS_HANDLE_NOTIFICATION_ACTION_CLICKED_EXCEPTION), e);
         }
     }
 
@@ -125,7 +126,7 @@ public class GroobeeNotificationActionUtils {
 
         PendingIntent pendingSendIntent;
         if (actionType.equals(Constants.PUSH_ACTION_TYPE_NONE)) {
-            LoggerUtils.v(TAG, "Adding notification action with type: " + actionType + " . Setting intent class to notification receiver.");
+            LoggerUtils.v(TAG, context.getString(R.string.GROOBEE_NOTIFICATION_ACTION_UTILS_ADD_NOTIFICATION_ACTION, actionType));
             Intent sendIntent = new Intent(Constants.PUSH_ACTION_CLICKED_ACTION).setClass(context, GroobeeNotificationUtils.getNotificationReceiverClass());
             sendIntent.putExtras(notificationActionExtras);
             pendingSendIntent = PendingIntent.getBroadcast(context, IntentUtils.getRequestCode(), sendIntent, PendingIntent.FLAG_UPDATE_CURRENT);

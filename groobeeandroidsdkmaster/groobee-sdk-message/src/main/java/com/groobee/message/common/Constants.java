@@ -27,7 +27,8 @@ public class Constants {
 
     public static final String PUSH_CUSTOM_NOTIFICATION_ID = "n";
 
-    public static final String PUSH_DEEP_LINK_KEY = "uri";
+    public static final String PUSH_DEEP_LINK_KEY = "deep_link";
+    public static final String PUSH_URL_LINK_KEY = "url_link";
 
     public static final String PUSH_OPEN_URI_IN_WEBVIEW_KEY = "push_use_webview";
 
