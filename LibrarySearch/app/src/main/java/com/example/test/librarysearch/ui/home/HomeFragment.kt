@@ -44,7 +44,5 @@ class HomeFragment : Fragment() {
 
         binding.viewModel = homeViewModel
         binding.lifecycleOwner = this
-
-        Log.d("nh", "test")
     }
 }
