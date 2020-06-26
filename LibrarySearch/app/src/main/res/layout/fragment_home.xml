@@ -11,9 +11,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/listBody"
+            android:id="@+id/listContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:paddingTop="10.00dp"
+            android:background="#EAEAEA"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:setAdapter="@{viewModel.adapter}"/>
     </LinearLayout>
 </layout>

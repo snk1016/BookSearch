@@ -7,4 +7,27 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="txtPrice">
+        <item name="android:textColor">#333333</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:typeface">sans</item>
+    </style>
+    <style name="txtPriceSale">
+        <item name="android:textColor">#2F9D27</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:typeface">sans</item>
+    </style>
+    <style name="txtPriceDisabled">
+        <item name="android:textColor">#A6A6A6</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="txt_gray_13">
+        <item name="android:textColor">#8C8C8C</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
 </resources>

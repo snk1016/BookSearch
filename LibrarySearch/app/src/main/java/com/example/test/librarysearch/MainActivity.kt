@@ -3,6 +3,7 @@ package com.example.test.librarysearch
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.widget.SearchView
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +20,19 @@ class MainActivity : AppCompatActivity() {
         actionSearch.maxWidth = Int.MAX_VALUE
         actionSearch.queryHint = getString(R.string.hint_search)
 
+//        actionSearch.setOnQueryTextFocusChangeListener()
+
         return true
+    }
+
+    private val mQueryTextListener = object: SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?): Boolean {
+            return false
+        }
+
+        override fun onQueryTextChange(newText: String?): Boolean {
+            return false
+        }
+
     }
 }

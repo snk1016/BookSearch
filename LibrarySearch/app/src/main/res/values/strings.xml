@@ -4,6 +4,8 @@
     <string name="kakao_service_url">https://dapi.kakao.com</string>
 
     <string name="txt_search">Search</string>
+    <string name="txt_author">작가 -&#160;</string>
+    <string name="txt_publisher">출판 -&#160;</string>
 
     <string name="hint_search">검색할 책 이름을 입력해주세요.</string>
 
