@@ -49,6 +49,12 @@ class HomeAdapter(documents: MutableList<Documents>): RecyclerView.Adapter<HomeA
         notifyItemInserted(position)
     }
 
+    fun removeItem() {
+        val size = itemCount
+        items.removeAll(items)
+        notifyItemRangeRemoved(0, size)
+    }
+
     interface OnItemClickListener {
         fun setOnItemClickListener(view: View, item: Documents, position: Int)
     }

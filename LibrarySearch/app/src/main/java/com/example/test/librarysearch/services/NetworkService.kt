@@ -8,5 +8,5 @@ import retrofit2.http.Query
 interface NetworkService {
     @GET("/v3/search/book")
     fun searchBook(@Query("target") target: String, @Query("query") query: String
-                     , @Query("size") size: Int, @Query("page") page: Int): Observable<Response>
+                   , @Query("page") page: Int , @Query("size") size: Int): Observable<Response>
 }

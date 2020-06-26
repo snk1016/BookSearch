@@ -3,13 +3,14 @@ package com.example.test.librarysearch.model.response
 import com.example.test.librarysearch.common.FormatUtils
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import java.util.*
 
 data class Documents (
     @SerializedName("contents")
     val contents: String,
 
     @SerializedName("datetime")
-    val datetime: String,
+    val datetime: Date,
 
     @SerializedName("isbn")
     val isbn: String,
@@ -46,5 +47,8 @@ data class Documents (
     val unitSalePrice: String get() = "(${FormatUtils.toUnitWon(salePrice)})"
 
     val allAuthor: String get() = authors.toString().replace("[", "").replace("]", "")
+    val allTranslators: String get() = translators.toString().replace("[", "").replace("]", "")
+
+    val datetimeFormat: String get() = FormatUtils.toDateFormatter(datetime)
 
 }

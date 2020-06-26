@@ -1,10 +1,13 @@
 package com.example.test.librarysearch.viewModel.home
 
 import android.content.Context
-import android.util.Log
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.test.librarysearch.R
+import com.example.test.librarysearch.common.LoadingProgressBar
 import com.example.test.librarysearch.model.response.Documents
 import com.example.test.librarysearch.model.response.Response
 import com.example.test.librarysearch.services.NetworkService
@@ -16,34 +19,31 @@ import io.reactivex.schedulers.Schedulers
 
 class HomeViewModel(private val context: Context?, private val api: NetworkService) : DisposableViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
-
     private val _adapter  = MutableLiveData<HomeAdapter>()
 
     val adapter : LiveData<HomeAdapter> get() = _adapter
 
     var homeAdapter: HomeAdapter? = null
 
-    private val pageSize = 5
+    private val loadingProgressBar = LoadingProgressBar(context!!)
 
-    fun callApiService(RESTApi: String, pageNo: Int, listener: HomeAdapter.OnItemClickListener) {
+    private val pageSize = 50
+
+    fun callApiService(RESTApi: String, bookName: String, pageNo: Int, txtSearchNotFound: TextView, listener: HomeAdapter.OnItemClickListener) {
         var observable: Observable<Response>? = null
 
         when(RESTApi) {
             context?.getString(R.string.REST_API_FUNCTION_SEARCH_BOOK) -> {
-                observable = api.searchBook("title", "자바", pageSize, pageNo)
+                observable = api.searchBook("title", bookName, pageNo, pageSize)
             }
         }
 
         observable?.let {
-            loadData(observable, listener)
+            loadData(observable, txtSearchNotFound, listener)
         }
     }
 
-    private fun loadData(observable: Observable<Response>, listener: HomeAdapter.OnItemClickListener) {
+    private fun loadData(observable: Observable<Response>, txtSearchNotFound: TextView, listener: HomeAdapter.OnItemClickListener) {
         addDisposable(observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -55,7 +55,6 @@ class HomeViewModel(private val context: Context?, private val api: NetworkServi
                 }
                 .subscribe({ response ->
                     val items = response.documents
-//                    response
                     items?.let {
                         if(homeAdapter == null || homeAdapter?.itemCount == 0) {
                             setBookAdapter(it, listener)
@@ -65,9 +64,12 @@ class HomeViewModel(private val context: Context?, private val api: NetworkServi
                         }
                     }
 
-                    Log.d("nh", "response : $response")
+                    if(homeAdapter == null || homeAdapter?.itemCount == 0)
+                        txtSearchNotFound.visibility = View.VISIBLE
+                    else
+                        txtSearchNotFound.visibility = View.GONE
                 }, { error ->
-                    Log.e("nh", error?.message!!)
+                    Toast.makeText(context, "ERROR => ${error?.message}", Toast.LENGTH_SHORT).show()
                 })
         )
     }
@@ -84,11 +86,17 @@ class HomeViewModel(private val context: Context?, private val api: NetworkServi
         homeAdapter?.addItem(items, insertPos)
     }
 
+    fun removeAdapter() {
+        homeAdapter?.removeItem()
+    }
+
     private fun showProgress() {
-//        _progressView.value = View.VISIBLE
+        if(!loadingProgressBar.isShowing)
+            loadingProgressBar.show()
     }
 
     private fun hideProgress() {
-//        _progressView.value = View.INVISIBLE
+        if(loadingProgressBar.isShowing)
+            loadingProgressBar.dismiss()
     }
 }

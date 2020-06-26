@@ -1,7 +1,6 @@
 package com.example.test.librarysearch.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
@@ -9,12 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.test.librarysearch.MainActivity
 import com.example.test.librarysearch.R
 import com.example.test.librarysearch.databinding.FragmentHomeBinding
 import com.example.test.librarysearch.model.response.Documents
 import com.example.test.librarysearch.services.NetworkService
 import com.example.test.librarysearch.viewModel.home.HomeViewModel
 import com.example.test.librarysearch.viewModel.home.HomeViewModelFactory
+import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 
 class HomeFragment : Fragment() {
@@ -27,9 +28,9 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
 
-    private var pageNo = 1
+    private lateinit var bookName: String
 
-    private var currentPosition = 0
+    private var pageNo = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
@@ -48,16 +49,25 @@ class HomeFragment : Fragment() {
         binding.viewModel = homeViewModel
         binding.lifecycleOwner = this
 
-        binding.listContainer.setHasFixedSize(true)
         binding.listContainer.addOnScrollListener(mScrollListener)
+    }
 
-        homeViewModel.callApiService(getString(R.string.REST_API_FUNCTION_SEARCH_BOOK), pageNo, mItemClickListener)
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
+        if(homeViewModel.homeAdapter == null || homeViewModel.homeAdapter?.itemCount == 0)
+            binding.txtSearchNotFound.visibility = View.VISIBLE
+        else
+            binding.txtSearchNotFound.visibility = View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
-        val actionSearch = menu?.findItem(R.id.action_search)?.actionView as SearchView
+        inflater.inflate(R.menu.search, menu)
+
+        val actionSearch = menu.findItem(R.id.action_search).actionView as SearchView
 
         actionSearch.maxWidth = Int.MAX_VALUE
         actionSearch.queryHint = getString(R.string.hint_search)
@@ -66,8 +76,6 @@ class HomeFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        item.itemId
-
         if(item.itemId == R.id.action_search) {
             val actionSearch = item as SearchView
 
@@ -82,20 +90,23 @@ class HomeFragment : Fragment() {
 
     private val mQueryTextListener = object: SearchView.OnQueryTextListener {
         override fun onQueryTextSubmit(query: String?): Boolean {
-            Log.d("nh", "query : ${query}")
+            query?.let {
+                bookName = it
+                homeViewModel.removeAdapter()
+                homeViewModel.callApiService(getString(R.string.REST_API_FUNCTION_SEARCH_BOOK), it, pageNo, binding.txtSearchNotFound, mItemClickListener)
+            }
+
             return false
         }
 
         override fun onQueryTextChange(newText: String?): Boolean {
-            Log.d("nh", "newText : ${newText}")
             return false
         }
-
     }
 
     private var mItemClickListener = object: HomeAdapter.OnItemClickListener {
         override fun setOnItemClickListener(view: View, item: Documents, position: Int) {
-            Log.d("nh", "item : $item")
+            (activity as MainActivity).moveDetailFragment(Gson().toJson(item))
         }
     }
 
@@ -107,9 +118,8 @@ class HomeFragment : Fragment() {
             val itemTotalCount = (recyclerView.adapter?.itemCount?.minus(1))
 
             if(lastVisibleItemPosition == itemTotalCount) {
-                currentPosition = itemTotalCount
                 pageNo++
-                homeViewModel.callApiService(getString(R.string.REST_API_FUNCTION_SEARCH_BOOK), pageNo, mItemClickListener)
+                homeViewModel.callApiService(getString(R.string.REST_API_FUNCTION_SEARCH_BOOK), bookName, pageNo, binding.txtSearchNotFound, mItemClickListener)
             }
         }
     }

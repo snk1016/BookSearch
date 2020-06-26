@@ -2,37 +2,27 @@ package com.example.test.librarysearch
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.View
-import androidx.appcompat.widget.SearchView
+import com.example.test.librarysearch.ui.home.HomeFragment
+import com.example.test.librarysearch.ui.home.detail.HomeDetailFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.apply {
+            replace(R.id.fragmentContainer, HomeFragment())
+            commit()
+        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        return super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.search, menu)
-        val actionSearch = menu?.findItem(R.id.action_search)?.actionView as SearchView
-
-        actionSearch.maxWidth = Int.MAX_VALUE
-        actionSearch.queryHint = getString(R.string.hint_search)
-
-//        actionSearch.setOnQueryTextFocusChangeListener()
-
-        return true
-    }
-
-    private val mQueryTextListener = object: SearchView.OnQueryTextListener {
-        override fun onQueryTextSubmit(query: String?): Boolean {
-            return false
+    fun moveDetailFragment(item: String) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.apply {
+            replace(R.id.fragmentContainer, HomeDetailFragment(item))
+            addToBackStack(null)
+            commit()
         }
-
-        override fun onQueryTextChange(newText: String?): Boolean {
-            return false
-        }
-
     }
 }

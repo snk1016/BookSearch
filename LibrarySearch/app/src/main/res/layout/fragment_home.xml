@@ -10,6 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/txtSearchNotFound"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/txt_black_13"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/hint_search_not_found"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listContainer"
             android:layout_width="match_parent"

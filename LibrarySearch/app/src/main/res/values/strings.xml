@@ -5,9 +5,20 @@
 
     <string name="txt_search">Search</string>
     <string name="txt_author">작가 -&#160;</string>
+    <string name="txt_author2">저자</string>
+    <string name="txt_translators">번역</string>
     <string name="txt_publisher">출판 -&#160;</string>
+    <string name="txt_publisher2">출판</string>
+    <string name="txt_status">상태</string>
+    <string name="txt_price">가격</string>
+    <string name="txt_introduction">소개</string>
+    <string name="txt_purchase">구매하기</string>
+
+    <string name="valid_author">%1$s 지음</string>
 
     <string name="hint_search">검색할 책 이름을 입력해주세요.</string>
+
+    <string name="hint_search_not_found">리스트가 없습니다.\n검색 키워드를 확인해주세요.</string>
 
     <string name="kakao_authorization">KakaoAK 6fe88491b61f9cf66159fd1109a46f53</string>
 </resources>
