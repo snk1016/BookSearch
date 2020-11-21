@@ -2,35 +2,21 @@ package com.example.test.librarysearch.ui.home.detail
 
 import android.content.Intent
 import android.graphics.Paint
+import android.graphics.drawable.StateListDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import androidx.appcompat.widget.SearchView
+import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.test.librarysearch.MainActivity
 import com.example.test.librarysearch.R
-import com.example.test.librarysearch.databinding.FragmentHomeBinding
 import com.example.test.librarysearch.databinding.FragmentHomeDetailBinding
 import com.example.test.librarysearch.model.response.Documents
-import com.example.test.librarysearch.services.NetworkService
-import com.example.test.librarysearch.viewModel.home.HomeViewModel
-import com.example.test.librarysearch.viewModel.home.HomeViewModelFactory
 import com.google.gson.Gson
-import org.koin.android.ext.android.inject
 
 class HomeDetailFragment : Fragment {
-
-    private lateinit var homeViewModelFactory: HomeViewModelFactory
-
-    private lateinit var homeViewModel: HomeViewModel
-
-    private val api: NetworkService by inject()
 
     private lateinit var binding: FragmentHomeDetailBinding
 
@@ -38,13 +24,12 @@ class HomeDetailFragment : Fragment {
 
     private lateinit var bookUrl: String
 
+    private lateinit var documents: Documents
+
+    private var isLike = false
+
     constructor(item: String) {
         this.item = item
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,7 +42,7 @@ class HomeDetailFragment : Fragment {
 
         setHasOptionsMenu(true)
 
-        val documents = Gson().fromJson(item, Documents::class.java)
+        documents = Gson().fromJson(item, Documents::class.java)
 
         if(documents.translators.size > 0)
             binding.layoutTranslator.visibility = View.VISIBLE
@@ -73,11 +58,14 @@ class HomeDetailFragment : Fragment {
         }
 
         bookUrl = documents.url
+        isLike = documents.isLike
 
         binding.item = documents
         binding.lifecycleOwner = this
 
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         binding.btnBookPurchase.setOnClickListener(mClickListener)
     }
@@ -85,11 +73,35 @@ class HomeDetailFragment : Fragment {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             android.R.id.home -> {
+                (activity as MainActivity).setLike(isLike)
                 activity?.onBackPressed()
+            }
+
+            R.id.action_like -> {
+                isLike = !item.isChecked
+                item.isChecked = isLike
+                setMenuLikeSelector(item)
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.like, menu)
+
+        var item = menu.findItem(R.id.action_like)
+        item.isChecked = isLike
+        setMenuLikeSelector(item)
+    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            (activity as MainActivity).setLike(isLike)
+            this.remove()
+            activity?.onBackPressed()
+        }
     }
 
     private val mClickListener = View.OnClickListener { v ->
@@ -99,5 +111,12 @@ class HomeDetailFragment : Fragment {
                 startActivity(it)
             }
         }
+    }
+
+    private fun setMenuLikeSelector(item: MenuItem) {
+        val stateListDrawable = resources.getDrawable(R.drawable.selector_like, null) as StateListDrawable
+        val state = intArrayOf(if (item.isChecked) android.R.attr.state_checked else android.R.attr.state_empty)
+        stateListDrawable.state = state
+        item.icon = stateListDrawable.current
     }
 }

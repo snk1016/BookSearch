@@ -1,6 +1,7 @@
 package com.example.test.librarysearch.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
@@ -48,8 +49,13 @@ class HomeFragment : Fragment() {
 
         binding.viewModel = homeViewModel
         binding.lifecycleOwner = this
+    }
 
-        binding.listContainer.addOnScrollListener(mScrollListener)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.listContainer.setHasFixedSize(true)
+        binding.listContainer.setItemViewCacheSize(50)
     }
 
     override fun onResume() {
@@ -60,6 +66,10 @@ class HomeFragment : Fragment() {
             binding.txtSearchNotFound.visibility = View.VISIBLE
         else
             binding.txtSearchNotFound.visibility = View.GONE
+
+        (activity as MainActivity).getLike()?.let {
+            homeViewModel.updateItem(it, (activity as MainActivity).getCurrentPos())
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -92,8 +102,8 @@ class HomeFragment : Fragment() {
         override fun onQueryTextSubmit(query: String?): Boolean {
             query?.let {
                 bookName = it
-                homeViewModel.removeAdapter()
-                homeViewModel.callApiService(getString(R.string.REST_API_FUNCTION_SEARCH_BOOK), it, pageNo, binding.txtSearchNotFound, mItemClickListener)
+                homeViewModel.clearAdapter()
+                homeViewModel.callApiService(it, binding.txtSearchNotFound, mItemClickListener)
             }
 
             return false
@@ -106,22 +116,7 @@ class HomeFragment : Fragment() {
 
     private var mItemClickListener = object: HomeAdapter.OnItemClickListener {
         override fun setOnItemClickListener(view: View, item: Documents, position: Int) {
-            (activity as MainActivity).moveDetailFragment(Gson().toJson(item))
+            (activity as MainActivity).moveDetailFragment(Gson().toJson(item), position)
         }
     }
-
-    private var mScrollListener = object: RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-
-            val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-            val itemTotalCount = (recyclerView.adapter?.itemCount?.minus(1))
-
-            if(lastVisibleItemPosition == itemTotalCount) {
-                pageNo++
-                homeViewModel.callApiService(getString(R.string.REST_API_FUNCTION_SEARCH_BOOK), bookName, pageNo, binding.txtSearchNotFound, mItemClickListener)
-            }
-        }
-    }
-
 }

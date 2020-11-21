@@ -5,58 +5,55 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.librarysearch.R
 import com.example.test.librarysearch.databinding.AdapterHomeItemBinding
 import com.example.test.librarysearch.model.response.Documents
 
-class HomeAdapter(documents: MutableList<Documents>): RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
-    private var items: MutableList<Documents> = documents
+class HomeAdapter: PagedListAdapter<Documents, HomeAdapter.HomeViewHolder>(diffCallback) {
     lateinit var onItemClickListener: OnItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
-        return HomeViewHolder(
-            AdapterHomeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        )
-    }
-
-    override fun getItemCount(): Int {
-        return items.size
+        return HomeViewHolder(AdapterHomeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
-        if(items[position].price > items[position].salePrice ) {
-            holder.binding.txtBookItemPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-            holder.binding.txtBookItemSalePrice.visibility = View.VISIBLE
+        getItem(position)?.let {
+            if(it.price > it.salePrice) {
+                holder.binding.txtBookItemPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                holder.binding.txtBookItemSalePrice.visibility = View.VISIBLE
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                holder.binding.txtBookItemPrice.setTextAppearance(R.style.txtPriceDisabled)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    holder.binding.txtBookItemPrice.setTextAppearance(R.style.txtPriceDisabled)
+                else
+                    holder.binding.txtBookItemPrice.setTextAppearance(holder.binding.txtBookItemPrice.context, R.style.txtPriceDisabled)
+            }
+
+            if(it.isLike)
+                holder.binding.imgLike.setImageResource(R.drawable.icon_heart_on)
             else
-                holder.binding.txtBookItemPrice.setTextAppearance(holder.binding.txtBookItemPrice.context, R.style.txtPriceDisabled)
+                holder.binding.imgLike.setImageResource(R.drawable.icon_heart_off)
+
+            holder.binding.item = it
+            holder.binding.position = position
+            holder.binding.listener = onItemClickListener
         }
-
-        holder.binding.item = items[position]
-        holder.binding.position = position
-        holder.binding.listener = onItemClickListener
-    }
-
-    fun setOnItemClickListener(view: View, item: Documents, position: Int) {
-        onItemClickListener.setOnItemClickListener(view, item, position)
-    }
-
-    fun addItem(item: MutableList<Documents>, position: Int) {
-        items.addAll(item)
-        notifyItemInserted(position)
-    }
-
-    fun removeItem() {
-        val size = itemCount
-        items.removeAll(items)
-        notifyItemRangeRemoved(0, size)
     }
 
     interface OnItemClickListener {
         fun setOnItemClickListener(view: View, item: Documents, position: Int)
+    }
+
+    companion object {
+        private val diffCallback = object : DiffUtil.ItemCallback<Documents>() {
+            override fun areItemsTheSame(oldItem: Documents, newItem: Documents): Boolean =
+                oldItem == newItem
+
+            override fun areContentsTheSame(oldItem: Documents, newItem: Documents): Boolean =
+                oldItem.isLike == newItem.isLike && oldItem == newItem
+        }
     }
 
     class HomeViewHolder: RecyclerView.ViewHolder {

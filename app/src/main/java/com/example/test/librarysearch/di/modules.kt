@@ -1,6 +1,5 @@
 package com.example.test.librarysearch.di
 
-import android.util.Log
 import com.example.test.librarysearch.LibSearchApp
 import com.example.test.librarysearch.services.NetworkService
 import okhttp3.OkHttpClient
@@ -29,7 +28,7 @@ val apiModule = module {
 
     single {
         HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.NONE
         }
     }
 }

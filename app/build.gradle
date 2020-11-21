@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.test.librarysearch"
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -66,4 +66,8 @@ dependencies {
     implementation "org.koin:koin-android:2.0.1"
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'
+
+    implementation "androidx.paging:paging-runtime:2.1.2" // For Kotlin use paging-runtime-ktx
+    testImplementation "androidx.paging:paging-common:2.1.2" // For Kotlin use paging-common-ktx
+    implementation "androidx.paging:paging-rxjava2:2.1.2" // For Kotlin use paging-rxjava2-ktx
 }

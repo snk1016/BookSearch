@@ -3,14 +3,13 @@ package com.example.test.librarysearch.model.response
 import com.example.test.librarysearch.common.FormatUtils
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
-import java.util.*
 
 data class Documents (
     @SerializedName("contents")
     val contents: String,
 
     @SerializedName("datetime")
-    val datetime: Date,
+    val datetime: String,
 
     @SerializedName("isbn")
     val isbn: String,
@@ -36,6 +35,8 @@ data class Documents (
     @SerializedName("url")
     val url: String,
 
+    var isLike: Boolean = false,
+
     @SerializedName("authors")
     val authors: MutableList<String>,
 
@@ -49,6 +50,6 @@ data class Documents (
     val allAuthor: String get() = authors.toString().replace("[", "").replace("]", "")
     val allTranslators: String get() = translators.toString().replace("[", "").replace("]", "")
 
-    val datetimeFormat: String get() = FormatUtils.toDateFormatter(datetime)
+    val datetimeFormat: String get() = if (datetime.isNullOrBlank()) datetime else FormatUtils.toDateFormatter(datetime)
 
 }
